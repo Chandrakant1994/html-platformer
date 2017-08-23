@@ -1,2 +1,1 @@
-# html-platformer
-platformer
+# html-game
