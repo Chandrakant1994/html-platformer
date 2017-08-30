@@ -18,14 +18,6 @@ window.onload = function () {
     intrVal = setInterval(update, 1000 / framesPerSecond);
     drawEverything();
     /* Platform generator */
-    plats.push(
-        {
-            x: 0,
-            y: canv.height / 2,
-            width: canv.width,
-            height: canv.height / 2
-        }
-    );
 }
 
 function update() {
@@ -53,12 +45,12 @@ function update() {
     onG = false;                //on ground set false by default
 
     // check whether player is in a platform
-
-    if (player.x > platform.x && player.x < platform.x + platform.width && player.y > platform.y && player.y < platform.y + platform.height) {
-        player.y = platform.y;
-        onG = true;
+    for (i = 0; i < plats.length; i++) {
+        if ((player.x > plats[i].x) && (player.x < plats[i].x + plats[i].width) && (player.y > plats[i].y) && (player.y < plats[i].y + plats[i].height)) {
+            player.y = plats[i].y;
+            onG = true;
+        }
     }
-
     // Add hovering platforms 
     if (frameNo % 50 == 0) {
         obstacles.push(new component(100, (canv.height / 2) - Math.floor(Math.random() * (300 - 100) + 100), "#ecf0f1", 100, 10));
@@ -71,18 +63,22 @@ function update() {
     background.update();
     ctx.fillStyle = "red";
     ctx.fillRect(300, 100, 40, 40);
+    ctx.font = "25px";
+    ctx.fillStyle = "black";
+    ctx.fillText("X : " + player.x + " Y : " + player.y , canv.width-200 , 40 );
+    ctx.fillText("X : " + platform.x + " Y : " + platform.y , canv.width-200 , 80 );
+    ctx.fillText("X : " + platform3.x + " Y : " + platform3.y , canv.width-200 , 120 );
     platform.update();
     platform2.update();
     platform3.update();
     //player.newPos();
+    player.angle += 2 * Math.PI/180;
     player.update();
 
     for (i = 0; i < obstacles.length; i++) {
         obstacles[i].x += 3;
         obstacles[i].update();
     }
-
-    //drawEverything();
 
 }
 
@@ -94,14 +90,28 @@ function component(x, y, color, width, height) {
     this.y = y;
     this.speedX = 0;
     this.speedY = 0;
+    this.angle = 0;
     this.update = function () {
         //ctx = canv.getContext('2d');
+        if(this.angle == 0){
         ctx.fillStyle = this.color;
         ctx.fillRect(this.x, this.y, this.width, this.height);
+        }
+        else{
+        ctx.save();
+        ctx.translate(this.x,this.y);
+        ctx.rotate(this.angle);
+        ctx.fillStyle = this.color;
+        ctx.fillRect(this.width/2, this.height/2, this.width, this.height);
+        ctx.restore();
+    }
     };
     this.newPos = function () {
         this.x += this.speedX;
         this.y += this.speedY;
+    }
+
+    this.rotate = function () {
     }
 }
 
@@ -116,14 +126,18 @@ function drawEverything() {
     platform = new component(0, canv.height / 2, "#ecf0f1", canv.width, canv.height / 2)
     platform.update();
 
-    player = new component(200, 200, "#f1c40f", 20, -20);
+    player = new component(200, 0, "#f1c40f", 20, -20);
     player.update();
 
     platform2 = new component(canv.width + 100, canv.height / 2, "#ecf0f1", canv.width, canv.height / 2)
     platform2.update();
 
-    platform3 = new component(canv.width, (canv.height / 2) + 100, "#ecf0f1", 100, (canv.height / 2) + 100)
+    platform3 = new component(canv.width, (canv.height / 2) + 100, "#ecf0f1", 100, (canv.height / 2) - 100)
     platform3.update();
+
+    plats.push(platform);
+    plats.push(platform2);
+    plats.push(platform3);
 
 }
 
@@ -156,7 +170,7 @@ function keyUp(event) {
                 intrVal = setInterval(update, 1000 / framesPerSecond);
             } else {
                 ctx.font = "30px Arial";
-                ctx.fillText("Paused",canv.width/2 - 80,canv.height/4);
+                ctx.fillText("Paused", canv.width / 2 - 80, canv.height / 4);
                 clearInterval(intrVal);
             }
             break;
