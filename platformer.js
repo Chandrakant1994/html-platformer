@@ -46,7 +46,10 @@ function update() {
 
     // check whether player is in a platform
     for (i = 0; i < plats.length; i++) {
-        if ((player.x > plats[i].x) && (player.x < plats[i].x + plats[i].width) && (player.y >= plats[i].y) && (player.y + player.width < plats[i].y + plats[i].height) ) { //
+        if ((player.x+player.width > plats[i].x) && 
+            (player.x < plats[i].x + plats[i].width) && 
+            (player.y > plats[i].y ) &&  // && player.y <= plats[i].y + player.width
+            (player.y + player.width < plats[i].y + plats[i].height)) { //
             player.y = plats[i].y;
             player.angle = 0;                                       // To land player on ground without any roation angle
             onG = true;
@@ -65,16 +68,16 @@ function update() {
     ctx.fillStyle = "red";
     ctx.fillRect(0, 0, 40, 40);
     ctx.font = "25px";
-    ctx.fillStyle = "black";
-    ctx.fillText("X : " + player.x + " Y : " + player.y , canv.width-200 , 40 );
-    ctx.fillText("X : " + platform.x + " Y : " + platform.y , canv.width-200 , 80 );
-    ctx.fillText("X : " + platform3.x + " Y : " + platform3.y , canv.width-200 , 120 );
+    ctx.fillStyle = "white";
+    ctx.fillText("X : " + player.x + " Y : " + player.y, canv.width - 200, 40);
+    ctx.fillText("X : " + platform.x + " Y : " + platform.y, canv.width - 200, 80);
+    ctx.fillText("X : " + platform3.x + " Y : " + platform3.y, canv.width - 200, 120);
     platform.update();
     platform2.update();
     platform3.update();
     //player.newPos();
-    if(!onG){
-    player.angle += 16 * Math.PI/180;
+    if (!onG) {
+        player.angle += 16 * Math.PI / 180;
     }
     player.update();
 
@@ -96,18 +99,18 @@ function component(x, y, color, width, height) {
     this.angle = 0;
     this.update = function () {
         //ctx = canv.getContext('2d');
-        if(this.angle == 0){
-        ctx.fillStyle = this.color;
-        ctx.fillRect(this.x, this.y, this.width, this.height);
+        if (this.angle == 0) {
+            ctx.fillStyle = this.color;
+            ctx.fillRect(this.x, this.y, this.width, this.height);
         }
-        else{
-        ctx.save();
-        ctx.translate(this.x,this.y);
-        ctx.rotate(this.angle);
-        ctx.fillStyle = this.color;
-        ctx.fillRect(this.width/-2, this.height/-2, this.width, this.height);
-        ctx.restore();
-    }
+        else {
+            ctx.save();
+            ctx.translate(this.x, this.y);
+            ctx.rotate(this.angle);
+            ctx.fillStyle = this.color;
+            ctx.fillRect(this.width / -2, this.height / -2, this.width, this.height);
+            ctx.restore();
+        }
     };
     this.newPos = function () {
         this.x += this.speedX;
